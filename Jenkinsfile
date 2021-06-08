@@ -51,7 +51,7 @@ pipeline {
         stage ('Building a Docker image'){
         steps {
             script {
-          docker.build registry + ":$BUILD_NUMBER"
+          sudo docker.build registry + ":$BUILD_NUMBER"
         }
         }
         }
@@ -59,14 +59,14 @@ pipeline {
       steps{
         script {
           docker.withRegistry( '', registryCredential ) {
-            sh 'docker push $registry:$BUILD_NUMBER'
+            sudo sh 'docker push $registry:$BUILD_NUMBER'
           }
         }
       }
     }
     stage('Remove Unused docker image') {
       steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
+       sudo sh "docker rmi $registry:$BUILD_NUMBER"
       }
     }
     stage ('Deploy to Docker') {
@@ -74,8 +74,8 @@ pipeline {
         label 'DockerServer'
     }
       steps {
-	      sh "docker run -p 8080:8080 -d $registry:$BUILD_NUMBER"
-        sh "docker ps -a"
+	      sudo sh "docker run -p 8080:8080 -d $registry:$BUILD_NUMBER"
+        sudo sh "docker ps -a"
        }           
              
      } 
